@@ -98,6 +98,11 @@ class { 'composer':
   require => Package['php5', 'curl'],
 }
 
+composer::run { 'query-auth-impl':
+  require => Class['composer'],
+  path => '/var/sites/dev.query-auth',
+}
+
 puphpet::ini { 'xdebug':
   value   => [
     'xdebug.default_enable = 1',
