@@ -8,7 +8,7 @@ $config = array(
         'log.writer' => new Slim\Extras\Log\DateTimeFileWriter(
             array(
                 'path' => __DIR__ . '/logs',
-                'name_format' => 'y-m-d'
+                'name_format' => 'Y-m-d'
             )
         )
     ),
