@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<phpunit bootstrap="tests/bootstrap.php" colors="true">
+    <testsuite name="all-tests">
+        <directory>tests/Example</directory>
+    </testsuite>
+
+    <filter>
+        <whitelist>
+            <directory suffix=".php">./src</directory>
+            <exclude>
+                <file>./src/Example/ApiCredentials.php</file>
+            </exclude>
+        </whitelist>
+    </filter>
+
+    <logging>
+        <log type="coverage-html" 
+            target="build/coverage" 
+            charset="UTF-8" 
+            yui="true" 
+            highlight="true" 
+            lowUpperBound="40"
+            highLowerBound="70" />
+    </logging>
+</phpunit>
