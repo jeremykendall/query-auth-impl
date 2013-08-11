@@ -12,6 +12,11 @@ $config = array(
             )
         )
     ),
+    'api' => array(
+        // You wouldn't version these in a public repo. Obviously. Duh.
+        'key' => 'ah5yEgQzjuFsC9nWsRI4Nar3ikOqWVPcD3OntHpg',
+        'secret' => 'M/4SVUQwO0qqvnXgENfylhocR.e1FQYHYeFTn808n8YR3oojPtR0HkB5E/Ms',
+    ),
     'twig' => array(
         'charset' => 'utf-8',
         'cache' => realpath(__DIR__ . '/templates/cache'),
@@ -26,7 +31,7 @@ $config = array(
         'secure' => true,
         'httponly' => false,
         'name' => 'slim_session',
-        'secret' => 'fjksdf23naos8d88sl++ls1/l.w90sj',
+        'secret' => 'CHANGE_ME. FOR_REAL, CHANGE_ME',
         'cipher' => MCRYPT_RIJNDAEL_256,
         'cipher_mode' => MCRYPT_MODE_CBC
     ),
