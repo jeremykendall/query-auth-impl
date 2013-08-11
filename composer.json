@@ -6,9 +6,16 @@
         "slim/extras": "2.0.*",
         "slim/views": "0.1.*",
         "twig/twig": "1.13.*",
-        "jeremykendall/query-auth": "dev-develop"
+        "jeremykendall/query-auth": "dev-develop",
+        "shkm/jsend": "dev-master",
+        "guzzle/guzzle": "v3.7.2"
     },
     "require-dev": {
         "phpunit/phpunit": "3.7.*"
+    },
+    "autoload": {
+        "psr-0": {
+            "Example\\": "src/"
+        }
     }
 }
