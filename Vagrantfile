@@ -11,7 +11,11 @@ Vagrant.configure("2") do |config|
     v.customize ["modifyvm", :id, "--name", "query-auth-implementation"]
   end
   
-  config.vm.synced_folder "./", "/var/sites/dev.query-auth", id: "vagrant-root", :owner => "vagrant", :group => "www-data", :extra => "dmode=775,fmode=664" 
+  config.vm.synced_folder "./", "/var/sites/dev.query-auth", id: "vagrant-root", 
+    :owner => "vagrant", 
+    :group => "www-data", 
+    :extra => "dmode=775,fmode=664" 
+
   config.vm.provision :shell, :inline => "sudo apt-get update"
 
   config.vm.provision :shell, :inline => 'echo -e "mysql_root_password=
