@@ -3,8 +3,47 @@
         "This file locks the dependencies of your project to a known state",
         "Read more about it at http://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file"
     ],
-    "hash": "972f3eecc3a6fb5c413c9a25938cbd36",
+    "hash": "f40c49c54e539823bd0525c6c907f78b",
     "packages": [
+        {
+            "name": "erusev/parsedown",
+            "version": "dev-master",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/erusev/parsedown.git",
+                "reference": "0.1.3"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/erusev/parsedown/zipball/0.1.3",
+                "reference": "0.1.3",
+                "shasum": ""
+            },
+            "type": "library",
+            "autoload": {
+                "psr-0": {
+                    "Parsedown": ""
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Emanuil Rusev",
+                    "email": "hello@erusev.com",
+                    "homepage": "http://erusev.com"
+                }
+            ],
+            "description": "Parser for Markdown.",
+            "homepage": "http://parsedown.org",
+            "keywords": [
+                "markdown",
+                "parser"
+            ],
+            "time": "2013-07-25 21:08:52"
+        },
         {
             "name": "guzzle/guzzle",
             "version": "v3.7.2",
@@ -245,12 +284,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/shkm/JSend.git",
-                "reference": "v1.0.0"
+                "reference": "8327585a4437073d398ed264d52162ccdd7fb7d2"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/shkm/JSend/zipball/v1.0.0",
-                "reference": "v1.0.0",
+                "url": "https://api.github.com/repos/shkm/JSend/zipball/8327585a4437073d398ed264d52162ccdd7fb7d2",
+                "reference": "8327585a4437073d398ed264d52162ccdd7fb7d2",
                 "shasum": ""
             },
             "require": {
@@ -283,7 +322,7 @@
                 "jsend",
                 "json"
             ],
-            "time": "2013-04-11 19:11:09"
+            "time": "2013-08-11 15:16:47"
         },
         {
             "name": "slim/extras",
@@ -956,7 +995,8 @@
     "minimum-stability": "stable",
     "stability-flags": {
         "jeremykendall/query-auth": 20,
-        "shkm/jsend": 20
+        "shkm/jsend": 20,
+        "erusev/parsedown": 20
     },
     "platform": [
 
