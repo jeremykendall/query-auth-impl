@@ -19,7 +19,8 @@ This sample implementation makes use of the following tools:
 * [Slim Framework](http://slimframework.com/): A PHP microframework
 * [Guzzle](http://guzzlephp.org/): A PHP HTTP client, used here to send requests
 * [JSend](https://github.com/shkm/JSend): [Jamie Schembri's](https://twitter.com/shkm)
-PHP implementation of the OmniTI [JSend specifiction](http://labs.omniti.com/labs/jsend)
+  PHP implementation of the OmniTI [JSend specifiction](http://labs.omniti.com/labs/jsend)
+* [Parsedown PHP](https://github.com/erusev/parsedown): Emanuil Rusev's Markdown parser for PHP
 
 ## Usage
 
