@@ -30,6 +30,56 @@ This sample implementation makes use of the following tools:
 * Add `192.168.56.102 query-auth.dev` to `/etc/hosts`
 * Open a browser and visit [http://query-auth.dev](http://query-auth.dev)
 
+## Request Signing
+
+Request signing has been abstracted in the `Example\ApiRequestSigner` class.
+Signing requests is now as simple as passing the request object and credentials
+object to the `signRequest` method:
+
+    /**
+     * Signs API request
+     *
+     * @param RequestInterface $request     HTTP Request
+     * @param ApiCredentials   $credentials API Credentials
+     */
+    public function signRequest(RequestInterface $request, ApiCredentials $credentials)
+    {
+        $signedParams = $this->client->getSignedRequestParams(
+            $credentials->getKey(),
+            $credentials->getSecret(),
+            $request->getMethod(),
+            $request->getHost(),
+            $request->getPath(),
+            $this->getParams($request)
+        );
+
+        $this->replaceParams($request, $signedParams);
+    }
+
+## Signature Validation
+
+Signature validation has been abstracted in the `Example\ApiRequestValidator`
+class. Validating request signatures is now as simple as passing the request
+object and credentials object to the `isValid` method:
+
+    /**
+     * Validates an API request
+     *
+     * @param  Request        $request     HTTP Request
+     * @param  ApiCredentials $credentials API Credentials
+     * @return bool           True if valid, false if invalid
+     */
+    public function isValid(Request $request, ApiCredentials $credentials)
+    {
+        return $this->server->validateSignature(
+            $credentials->getSecret(),
+            $request->getMethod(),
+            $request->getHost(),
+            $request->getPath(),
+            $this->getParams($request)
+        );
+    }
+
 ## Implementation Examples
 
 All code samples below can be found in `/public/index.php`.
