@@ -54,9 +54,7 @@ Visit [http://query-auth.dev/get-example](http://query-auth.dev/get-example) to 
 
         $response = $request->send();
 
-        // Decode the JSend json response
-        $output = print_r(JSendResponse::decode($response->getBody()), true);
-        $app->render('get.html', array('output' => $output));
+        $app->render('get.html', array('request' => (string) $request, 'response' => (string) $response));
     });
 
 #### Server: Validating a signed GET request
@@ -99,7 +97,7 @@ Visit [http://query-auth.dev/new-user](http://query-auth.dev/new-user) to see an
     /**
      * Sends a signed POST request to create a new user
      */
-    $app->get('/new-user', function() use ($app, $credentials, $requestSigner) {
+    $app->get('/post-example', function() use ($app, $credentials, $requestSigner) {
 
         $params = array(
             'name' => 'Ash',
@@ -116,9 +114,7 @@ Visit [http://query-auth.dev/new-user](http://query-auth.dev/new-user) to see an
 
         $response = $request->send();
 
-        // Decode the JSend json response
-        $output = print_r(JSendResponse::decode($response->getBody()), true);
-        $app->render('post.html', array('output' => $output));
+        $app->render('post.html', array('request' => (string) $request, 'response' => (string) $response));
     });
 
 #### Server: Validating a signed POST request
