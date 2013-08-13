@@ -1,24 +1,34 @@
 <?php
+/**
+ * Query Auth Example Implementation
+ *
+ * @copyright 2013 Jeremy Kendall
+ * @license https://github.com/jeremykendall/query-auth-impl/blob/master/LICENSE.md MIT
+ * @link https://github.com/jeremykendall/query-auth-impl
+ */
 
 namespace Example;
 
+/**
+ * Stores your API key and secret
+ */
 class ApiCredentials
 {
     /**
-     * @var string API Key
+     * @var string API key
      */
     private $key;
 
     /**
-     * @var string API Secret
+     * @var string API secret
      */
     private $secret;
 
     /**
      * Public constructor
      *
-     * @param string $key    API Key
-     * @param string $secret API Secret
+     * @param string $key    API key
+     * @param string $secret API secret
      */
     public function __construct($key, $secret)
     {
@@ -27,9 +37,9 @@ class ApiCredentials
     }
 
     /**
-     * Get key
+     * Gets API key
      *
-     * @return key
+     * @return string API key
      */
     public function getKey()
     {
@@ -37,9 +47,9 @@ class ApiCredentials
     }
 
     /**
-     * Set key
+     * Sets API key
      *
-     * @param $key the value to set
+     * @param string $key API key
      */
     public function setKey($key)
     {
@@ -47,9 +57,9 @@ class ApiCredentials
     }
 
     /**
-     * Get secret
+     * Gets API secret
      *
-     * @return secret
+     * @return string API secret
      */
     public function getSecret()
     {
@@ -57,9 +67,9 @@ class ApiCredentials
     }
 
     /**
-     * Set secret
+     * Sets API secret
      *
-     * @param $secret the value to set
+     * @param string $secret API secret
      */
     public function setSecret($secret)
     {
