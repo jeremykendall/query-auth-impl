@@ -1,0 +1,20 @@
+{% extends 'layout.html' %}
+
+{% block content %}
+<h2>POST Example</h2>
+<p>
+    Route <code>/post-example</code> signs and sends a <code>POST</code> request
+    to <code>/api/post-example</code>, which validates the request signature and responds
+    with mock new user data.
+</p>
+
+<h3>Request</h3>
+<pre>
+{{ request|trim }}
+</pre>
+
+<h3>Response</h3>
+<pre>
+{{ response|trim }}
+</pre>
+{% endblock %}

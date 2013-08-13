@@ -1,4 +1,11 @@
 <?php
+/**
+ * Query Auth Example Implementation
+ *
+ * @copyright 2013 Jeremy Kendall
+ * @license https://github.com/jeremykendall/query-auth-impl/blob/master/LICENSE.md MIT
+ * @link https://github.com/jeremykendall/query-auth-impl
+ */
 
 date_default_timezone_set('UTC');
 
@@ -24,7 +31,12 @@ $credentials = new ApiCredentials($config['api']['key'], $config['api']['secret'
 
 $collection = new NormalizedParameterCollection();
 $signer = new QueryAuthSigner($collection);
+
+// The ApiRequestSigner would be used by an API consumer to sign their requests
 $requestSigner = new ApiRequestSigner(new QueryAuthClient($signer));
+
+// The ApiRequestValidator would be used by an API creator to validation incoming
+// request signatures
 $requestValidator = new ApiRequestValidator(new QueryAuthServer($signer));
 
 // Prepare app
@@ -47,27 +59,33 @@ $app->view->parserExtensions = array(new TwigExtension());
 
 // Define routes
 $app->get('/', function () use ($app) {
-    $app->render('index.html');
+    $readme = Parsedown::instance()->parse(
+        file_get_contents(dirname(__DIR__) . '/README.md')
+    );
+    $app->render('index.html', array('readme' => $readme));
 });
 
 /**
- * Sends a GET request which returns a famous mangled phrase
+ * Sends a signed GET request which returns a famous mangled phrase
  */
-$app->get('/phrase', function() use ($credentials, $requestSigner) {
+$app->get('/get-example', function() use ($app, $credentials, $requestSigner) {
 
+    // Create request
     $guzzle = new GuzzleClient('http://query-auth.dev');
-    $request = $guzzle->get('/api/phrase');
+    $request = $guzzle->get('/api/get-example');
+
+    // Sign request
     $requestSigner->signRequest($request, $credentials);
 
     $response = $request->send();
 
-    var_dump(JSendResponse::decode($response->getBody()));
+    $app->render('get.html', array('request' => (string) $request, 'response' => (string) $response));
 });
 
 /**
- * Sends a POST request to create a new user
+ * Sends a signed POST request to create a new user
  */
-$app->get('/new-user', function() use ($credentials, $requestSigner) {
+$app->get('/post-example', function() use ($app, $credentials, $requestSigner) {
 
     $params = array(
         'name' => 'Ash',
@@ -75,21 +93,26 @@ $app->get('/new-user', function() use ($credentials, $requestSigner) {
         'department' => 'Housewares',
     );
 
+    // Create request
     $guzzle = new GuzzleClient('http://query-auth.dev');
-    $request = $guzzle->post('/api/user', array(), $params);
+    $request = $guzzle->post('/api/post-example', array(), $params);
+
+    // Sign request
     $requestSigner->signRequest($request, $credentials);
 
     $response = $request->send();
 
-    var_dump(JSendResponse::decode($response->getBody()));
+    $app->render('post.html', array('request' => (string) $request, 'response' => (string) $response));
 });
 
 /**
- * Accepts a signed GET request and returns a famous mangled phrase
+ * Validates a signed GET request and, if the request is valid, returns a
+ * famous mangled phrase
  */
-$app->get('/api/phrase', function () use ($app, $credentials, $requestValidator) {
+$app->get('/api/get-example', function () use ($app, $credentials, $requestValidator) {
 
     try {
+        // Validate the request signature
         $isValid = $requestValidator->isValid($app->request(), $credentials);
 
         if ($isValid) {
@@ -110,13 +133,15 @@ $app->get('/api/phrase', function () use ($app, $credentials, $requestValidator)
 });
 
 /**
- * Accepts a signed POST request to mimic creating a new user
+ * Validates a signed POST request and, if the request is valid, mimics creating
+ * a new user
  */
-$app->post('/api/user', function() use ($app, $credentials, $requestValidator) {
+$app->post('/api/post-example', function() use ($app, $credentials, $requestValidator) {
 
     $request = $app->request();
 
     try {
+        // Validate the request signature
         $isValid = $requestValidator->isValid($request, $credentials);
 
         if ($isValid) {
