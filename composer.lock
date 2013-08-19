@@ -236,12 +236,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/jeremykendall/query-auth.git",
-                "reference": "560992f1f9edb084eb87cadcd0185293cdbc4b78"
+                "reference": "cbbd81adfc7ac8b2e36f8c03f33d1862eeb9215f"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/jeremykendall/query-auth/zipball/560992f1f9edb084eb87cadcd0185293cdbc4b78",
-                "reference": "560992f1f9edb084eb87cadcd0185293cdbc4b78",
+                "url": "https://api.github.com/repos/jeremykendall/query-auth/zipball/cbbd81adfc7ac8b2e36f8c03f33d1862eeb9215f",
+                "reference": "cbbd81adfc7ac8b2e36f8c03f33d1862eeb9215f",
                 "shasum": ""
             },
             "require": {
@@ -276,7 +276,7 @@
                 "rest",
                 "signature"
             ],
-            "time": "2013-08-10 20:18:45"
+            "time": "2013-08-19 22:26:08"
         },
         {
             "name": "shkm/jsend",
@@ -284,12 +284,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/shkm/JSend.git",
-                "reference": "8327585a4437073d398ed264d52162ccdd7fb7d2"
+                "reference": "fd46fc87ac83a04ec5b7d2e8575dbecc73f1f89c"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/shkm/JSend/zipball/8327585a4437073d398ed264d52162ccdd7fb7d2",
-                "reference": "8327585a4437073d398ed264d52162ccdd7fb7d2",
+                "url": "https://api.github.com/repos/shkm/JSend/zipball/fd46fc87ac83a04ec5b7d2e8575dbecc73f1f89c",
+                "reference": "fd46fc87ac83a04ec5b7d2e8575dbecc73f1f89c",
                 "shasum": ""
             },
             "require": {
@@ -322,7 +322,7 @@
                 "jsend",
                 "json"
             ],
-            "time": "2013-08-11 15:16:47"
+            "time": "2013-08-17 15:11:03"
         },
         {
             "name": "slim/extras",

@@ -16,10 +16,7 @@ use Example\ApiRequestSigner;
 use Example\ApiRequestValidator;
 use Guzzle\Http\Client as GuzzleClient;
 use JSend\JSendResponse;
-use QueryAuth\Client as QueryAuthClient;
-use QueryAuth\NormalizedParameterCollection;
-use QueryAuth\Server as QueryAuthServer;
-use QueryAuth\Signer as QueryAuthSigner;
+use QueryAuth\Factory as QueryAuthFactory;
 use Slim\Views\Twig;
 use Slim\Views\TwigExtension;
 
@@ -29,15 +26,15 @@ $config['mode'] = (getenv('APPLICATION_ENV') ? getenv('APPLICATION_ENV') : 'prod
 // API credentials
 $credentials = new ApiCredentials($config['api']['key'], $config['api']['secret']);
 
-$collection = new NormalizedParameterCollection();
-$signer = new QueryAuthSigner($collection);
+// QueryAuth Factory for retrieving Server and Client instances
+$factory = new QueryAuthFactory();
 
 // The ApiRequestSigner would be used by an API consumer to sign their requests
-$requestSigner = new ApiRequestSigner(new QueryAuthClient($signer));
+$requestSigner = new ApiRequestSigner($factory->newClient());
 
 // The ApiRequestValidator would be used by an API creator to validation incoming
 // request signatures
-$requestValidator = new ApiRequestValidator(new QueryAuthServer($signer));
+$requestValidator = new ApiRequestValidator($factory->newServer());
 
 // Prepare app
 $app = new Slim\Slim($config['slim']);
