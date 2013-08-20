@@ -142,7 +142,7 @@ Validates the GET request and returns the famous mangled phrase:
 
 #### Client: Sending a signed POST request
 
-Visit [http://query-auth.dev/new-user](http://query-auth.dev/new-user) to see an example of a signed POST request:
+Visit [http://query-auth.dev/post-example](http://query-auth.dev/post-example) to see an example of a signed POST request:
 
     /**
      * Sends a signed POST request to create a new user
@@ -209,3 +209,13 @@ Validates the POST request and returns new user data:
         $response['Content-Type'] = 'application/json';
         echo $jsend->encode();
     });
+
+## Running Tests
+
+Unit and Integration tests are provided in this sample implementation. You can
+run the tests from the command line by executing `./vendor/bin/phpunit` from
+the command line.
+
+**IMPORTANT**: The VM *must* be running in order to run the integration tests.
+If you'd like to run just the unit tests, include the `--exclude-group` flag,
+like so: `./vendor/bin/phpunit --exclude-group=vm-required`.
