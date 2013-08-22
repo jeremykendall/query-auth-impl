@@ -1,5 +1,7 @@
 <?php
 
+$database = __DIR__ . '/db/example.db';
+
 $config = array(
     'slim' => array(
         'templates.path' => __DIR__ . '/templates',
@@ -23,6 +25,16 @@ $config = array(
         'auto_reload' => true,
         'strict_variables' => false,
         'autoescape' => true
+    ),
+    'database' => $database,
+    'pdo' => array(
+        'dsn' => 'sqlite:' . $database,
+        'username' => null,
+        'password' => null,
+        'options' => array(
+            PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
+            PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC
+        )
     ),
     'cookies' => array(
         'expires' => '20 minutes',
