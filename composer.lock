@@ -3,7 +3,7 @@
         "This file locks the dependencies of your project to a known state",
         "Read more about it at http://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file"
     ],
-    "hash": "715ad98386e4e6758b27387d7331d13b",
+    "hash": "23cae24802bdc2b3c538d5d40d8a0cb5",
     "packages": [
         {
             "name": "erusev/parsedown",
@@ -232,16 +232,16 @@
         },
         {
             "name": "jeremykendall/query-auth",
-            "version": "dev-feature/cnonce",
+            "version": "1.0.0-beta",
             "source": {
                 "type": "git",
                 "url": "https://github.com/jeremykendall/query-auth.git",
-                "reference": "393f2b35197b747c52a9f20d8032133267f5ce03"
+                "reference": "5030b53bb2bbbea1e2832749a8d9d7503bcc5176"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/jeremykendall/query-auth/zipball/393f2b35197b747c52a9f20d8032133267f5ce03",
-                "reference": "393f2b35197b747c52a9f20d8032133267f5ce03",
+                "url": "https://api.github.com/repos/jeremykendall/query-auth/zipball/5030b53bb2bbbea1e2832749a8d9d7503bcc5176",
+                "reference": "5030b53bb2bbbea1e2832749a8d9d7503bcc5176",
                 "shasum": ""
             },
             "require": {
@@ -276,7 +276,7 @@
                 "rest",
                 "signature"
             ],
-            "time": "2013-08-22 03:04:52"
+            "time": "2013-08-23 02:28:13"
         },
         {
             "name": "shkm/jsend",
@@ -994,7 +994,7 @@
     ],
     "minimum-stability": "stable",
     "stability-flags": {
-        "jeremykendall/query-auth": 20,
+        "jeremykendall/query-auth": 10,
         "shkm/jsend": 20,
         "erusev/parsedown": 20
     },
