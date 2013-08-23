@@ -1,0 +1,29 @@
+{% extends 'layout.html' %}
+
+{% block content %}
+<h2>Replay Prevention</h2>
+<p>
+    Route <code>/replay-example</code> signs and sends a <code>POST</code>
+    request to <code>/api/replay-example</code>, which checks to see if the
+    request has been sent previously.  If not, it validates the request
+    signature and responds with mock new user data if the signature is valid.
+</p>
+
+<form method="post">
+    {% for key, value in postFields %}
+    <input type="hidden" name="{{ key }}" value="{{ value }}" />
+    {% endfor %}
+    <button type="submit" class="btn btn-danger btn-lg" title="Replay the request">Replay</button> <a href="{{ baseUrl() }}/replay-example" class="btn btn-success btn-lg" title="Make a fresh request">Reset</a>
+</form>
+
+<h3>Request</h3>
+<pre>
+{{ request|trim }}
+</pre>
+
+<h3>Response</h3>
+<pre>
+{{ response|trim }}
+</pre>
+
+{% endblock %}
