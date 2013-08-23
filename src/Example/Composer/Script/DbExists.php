@@ -12,7 +12,8 @@ namespace Example\Composer\Script;
 use Composer\Script\Event;
 
 /**
- * DbExists ensures SignatureStorage DB exists
+ * Checks to see if the application's database has been created. If not, the
+ * database is created.
  */
 class DbExists
 {
