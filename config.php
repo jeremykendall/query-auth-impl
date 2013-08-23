@@ -36,17 +36,6 @@ $config = array(
             PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC
         )
     ),
-    'cookies' => array(
-        'expires' => '20 minutes',
-        'path' => '/',
-        'domain' => null,
-        'secure' => true,
-        'httponly' => false,
-        'name' => 'slim_session',
-        'secret' => 'CHANGE_ME. FOR_REAL, CHANGE_ME',
-        'cipher' => MCRYPT_RIJNDAEL_256,
-        'cipher_mode' => MCRYPT_MODE_CBC
-    ),
 );
 
 return $config;
