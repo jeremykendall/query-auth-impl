@@ -8,21 +8,21 @@
 
         <title>{% block page_title %}Query Auth Sample Implementation{% endblock %}</title>
 
-        <!-- Bootstrap core CSS -->
-        <link rel="stylesheet" href="//netdna.bootstrapcdn.com/bootstrap/3.0.0-rc1/css/bootstrap.min.css">
+        <!-- Latest compiled and minified CSS -->
+        <link rel="stylesheet" href="//netdna.bootstrapcdn.com/bootstrap/3.0.0/css/bootstrap.min.css">
 
         <!-- Custom styles for this template -->
         <link rel="stylesheet" href="/css/custom.css">
     </head>
 
     <body>
-
-        <div class="container-narrow">
+        <div class="container">
             <div class="header">
                 <ul class="nav nav-pills pull-right">
                     <li><a href="{{ baseUrl() }}">Home</a></li>
                     <li><a href="{{ baseUrl() }}/get-example">GET Example</a></li>
                     <li><a href="{{ baseUrl() }}/post-example">POST Example</a></li>
+                    <li><a href="{{ baseUrl() }}/replay-example">Replay Prevention</a></li>
                 </ul>
                 <h3 class="text-muted">Query Auth Sample Implementation</h3>
             </div>
@@ -39,6 +39,7 @@
         </div> <!-- /container -->
 
         <script src="http://code.jquery.com/jquery.js"></script>
-        <script src="//netdna.bootstrapcdn.com/bootstrap/3.0.0-rc1/js/bootstrap.min.js"></script>
+        <!-- Latest compiled and minified JavaScript -->
+        <script src="//netdna.bootstrapcdn.com/bootstrap/3.0.0/js/bootstrap.min.js"></script>
     </body>
 </html>

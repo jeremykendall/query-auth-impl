@@ -6,7 +6,7 @@
         "slim/extras": "2.0.*",
         "slim/views": "0.1.*",
         "twig/twig": "1.13.*",
-        "jeremykendall/query-auth": "dev-develop",
+        "jeremykendall/query-auth": "1.0.0-beta",
         "shkm/jsend": "dev-master",
         "guzzle/guzzle": "v3.7.2",
         "erusev/parsedown": "dev-master"
@@ -18,5 +18,13 @@
         "psr-0": {
             "Example\\": "src/"
         }
+    },
+    "scripts": {
+        "post-install-cmd": [
+            "Example\\Composer\\Script\\DbExists::createIfNotExists"
+        ],
+        "post-update-cmd": [
+            "Example\\Composer\\Script\\DbExists::createIfNotExists"
+        ]
     }
 }
