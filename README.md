@@ -1,26 +1,14 @@
-# Query Auth Sample Implementation
+# Query Auth Example Implementation
 
-Example implementation of the [Query
-Auth](https://github.com/jeremykendall/query-auth) API query authentication
-library.
+#### Example implementation of the [Query Auth library](https://github.com/jeremykendall/query-auth)
 
 ## Requirements
 
-In order to run this sample implementation, you'll need to have the following
+In order to run this example implementation, you'll need to have the following
 installed:
 
 * [Vagrant](http://www.vagrantup.com/)
 * [VirtualBox](https://www.virtualbox.org/)
-
-## Features
-
-This sample implementation makes use of the following tools:
-
-* [Slim Framework](http://slimframework.com/): A PHP microframework
-* [Guzzle](http://guzzlephp.org/): A PHP HTTP client, used here to send requests
-* [JSend](https://github.com/shkm/JSend): [Jamie Schembri's](https://twitter.com/shkm)
-  PHP implementation of the OmniTI [JSend specifiction](http://labs.omniti.com/labs/jsend)
-* [Parsedown PHP](https://github.com/erusev/parsedown): Emanuil Rusev's Markdown parser for PHP
 
 ## Usage
 
@@ -212,10 +200,21 @@ Validates the POST request and returns new user data:
 
 ## Running Tests
 
-Unit and Integration tests are provided in this sample implementation. You can
+Unit and Integration tests are provided in this example implementation. You can
 run the tests from the command line by executing `./vendor/bin/phpunit` from
 the command line.
 
 **IMPORTANT**: The VM *must* be running in order to run the integration tests.
 If you'd like to run just the unit tests, include the `--exclude-group` flag,
 like so: `./vendor/bin/phpunit --exclude-group=vm-required`.
+
+## Credits
+
+This example implementation makes use of the following external dependencies:
+
+* [Slim Framework](http://slimframework.com/): A PHP microframework
+* [Guzzle](http://guzzlephp.org/): A PHP HTTP client, used here to send requests
+* [JSend](https://github.com/shkm/JSend): [Jamie Schembri's](https://twitter.com/shkm)
+  PHP implementation of the OmniTI [JSend specifiction](http://labs.omniti.com/labs/jsend)
+* [Parsedown PHP](https://github.com/erusev/parsedown): Emanuil Rusev's Markdown parser for PHP
+* [Composer](http://getcomposer.org) Dependency Manager for PHP
