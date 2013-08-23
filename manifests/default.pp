@@ -65,6 +65,7 @@ php::module { 'php5-cli': }
 php::module { 'php5-curl': }
 php::module { 'php5-intl': }
 php::module { 'php5-mcrypt': }
+php::module { 'php5-sqlite': }
 
 class { 'php::devel':
   require => Class['php'],
