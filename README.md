@@ -287,6 +287,7 @@ Visit [http://query-auth.dev/replay-example](http://query-auth.dev/replay-exampl
 #### Server: Handling a Replayed Request
 
 Uses `$validateSignature` to ensure the request signature is valid.
+
 1. If valid, save the API key, request signature, and signature expiration timestamp
     * If the save is successful, this is a new request
     * If the save is unsuccessful, this is a replayed request and is denied
