@@ -5,14 +5,6 @@ $database = __DIR__ . '/db/example.db';
 $config = array(
     'slim' => array(
         'templates.path' => __DIR__ . '/templates',
-        'log.level' => Slim\Log::ERROR,
-        'log.enabled' => true,
-        'log.writer' => new Slim\Extras\Log\DateTimeFileWriter(
-            array(
-                'path' => __DIR__ . '/logs',
-                'name_format' => 'Y-m-d'
-            )
-        )
     ),
     'api' => array(
         // You wouldn't version these in a public repo. Obviously. Duh.

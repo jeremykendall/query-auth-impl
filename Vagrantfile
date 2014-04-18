@@ -1,3 +1,6 @@
+# -*- mode: ruby -*-
+# vi: set ft=ruby :
+
 Vagrant.configure("2") do |config|
   config.vm.box = "precise64"
   config.vm.box_url = "http://files.vagrantup.com/precise64.box"
@@ -14,7 +17,7 @@ Vagrant.configure("2") do |config|
   config.vm.synced_folder "./", "/var/sites/dev.query-auth", id: "vagrant-root", 
     :owner => "vagrant", 
     :group => "www-data", 
-    :extra => "dmode=775,fmode=664" 
+    mount_options: ["dmode=775,fmode=664"]
 
   config.vm.provision :shell, :inline => "sudo apt-get update"
 
