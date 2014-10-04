@@ -14,36 +14,47 @@ ini_set('display_startup_errors', 1);
 
 require '../vendor/autoload.php';
 
-use Example\ApiCredentials;
-use Example\ApiRequestSigner;
-use Example\ApiRequestValidator;
 use Example\Dao\Signature as SignatureDao;
-use Guzzle\Http\Client as GuzzleClient;
-use Guzzle\Http\Exception\BadResponseException;
+use GuzzleHttp\Client as GuzzleHttpClient;
+use GuzzleHttp\Exception\BadResponseException;
 use JSend\JSendResponse;
+use QueryAuth\Credentials\Credentials;
 use QueryAuth\Factory as QueryAuthFactory;
+use QueryAuth\Request\RequestValidator;
+use QueryAuth\Request\Adapter\Outgoing\GuzzleHttpRequestAdapter;
+use QueryAuth\Request\Adapter\Incoming\SlimRequestAdapter;
 use Slim\Slim;
 use Slim\Views\Twig;
 use Slim\Views\TwigExtension;
 
 $config = require_once __DIR__ . '/../config.php';
 
-$credentials = new ApiCredentials($config['api']['key'], $config['api']['secret']);
+// Prepare app
+$app = new Slim($config['slim']);
+
 $factory = new QueryAuthFactory();
+$requestSigner = $factory->newRequestSigner();
+$requestValidator = $factory->newRequestValidator();
 
-// The ApiRequestSigner would be used by an API consumer to sign their requests
-$requestSigner = new ApiRequestSigner($factory->newClient());
+$app->credentials = new Credentials($config['api']['key'], $config['api']['secret']);
 
-// The ApiRequestValidator would be used by an API creator to validate incoming requests
-$requestValidator = new ApiRequestValidator($factory->newServer());
-
-// Middleware to validate incoming request signatures
-$validateSignature = function (Slim $app, ApiCredentials $credentials, ApiRequestValidator $requestValidator) {
-    return function () use ($app, $credentials, $requestValidator) {
-        $response = $app->response();
+// Route middleware to validate incoming request signatures
+// See http://docs.slimframework.com/#Route-Middleware
+$validateSignature = function (Slim $app, RequestValidator $requestValidator) {
+    return function () use ($app, $requestValidator) {
+        $response = $app->response;
 
         try {
-            if ($requestValidator->isValid($app->request(), $credentials) === false) {
+            // Grabbing credentials from app container kind of mimics grabbing
+            // credentials from persistent storage
+            $credentials = $app->credentials;
+
+            $isValid = $requestValidator->isValid(
+                new SlimRequestAdapter($app->request),
+                $credentials
+            );
+
+            if ($isValid === false) {
                 $jsend = new JSendResponse('fail', array('message' => 'Invalid signature'));
                 $response->setStatus(403);
                 $response->headers->set('Content-Type', 'application/json');
@@ -57,9 +68,6 @@ $validateSignature = function (Slim $app, ApiCredentials $credentials, ApiReques
         }
     };
 };
-
-// Prepare app
-$app = new Slim($config['slim']);
 
 // Prepare view
 $app->view(new Twig());
@@ -77,18 +85,18 @@ $app->get('/', function () use ($app) {
 /**
  * Sends a signed GET request which returns a famous mangled phrase
  */
-$app->get('/get-example', function () use ($app, $credentials, $requestSigner) {
+$app->get('/get-example', function () use ($app, $requestSigner) {
 
     // Create request
-    $guzzle = new GuzzleClient('http://query-auth.dev');
-    $request = $guzzle->get('/api/get-example');
+    $guzzle = new GuzzleHttpClient(['base_url' => 'http://query-auth.dev']);
+    $request = $guzzle->createRequest('GET', '/api/get-example');
 
     // Sign request
-    $requestSigner->signRequest($request, $credentials);
+    $requestSigner->signRequest(new GuzzleHttpRequestAdapter($request), $app->credentials);
 
     // Send request
     try {
-        $response = $request->send();
+        $response = $guzzle->send($request);
     } catch (BadResponseException $bre) {
         $response = $bre->getResponse();
     }
@@ -100,7 +108,7 @@ $app->get('/get-example', function () use ($app, $credentials, $requestSigner) {
 /**
  * Sends a signed POST request to create a new user
  */
-$app->get('/post-example', function () use ($app, $credentials, $requestSigner) {
+$app->get('/post-example', function () use ($app, $requestSigner) {
 
     $params = array(
         'name' => 'Ash',
@@ -109,15 +117,15 @@ $app->get('/post-example', function () use ($app, $credentials, $requestSigner) 
     );
 
     // Create request
-    $guzzle = new GuzzleClient('http://query-auth.dev');
-    $request = $guzzle->post('/api/post-example', array(), $params);
+    $guzzle = new GuzzleHttpClient(['base_url' => 'http://query-auth.dev']);
+    $request = $guzzle->createRequest('POST', '/api/post-example', ['body' => $params]);
 
     // Sign request
-    $requestSigner->signRequest($request, $credentials);
+    $requestSigner->signRequest(new GuzzleHttpRequestAdapter($request), $app->credentials);
 
     // Send request
     try {
-        $response = $request->send();
+        $response = $guzzle->send($request);
     } catch (BadResponseException $bre) {
         $response = $bre->getResponse();
     }
@@ -128,11 +136,11 @@ $app->get('/post-example', function () use ($app, $credentials, $requestSigner) 
 /**
  * Sends a signed POST request to create a new user, OR replays a previous POST request
  */
-$app->map('/replay-example', function () use ($app, $credentials, $requestSigner) {
+$app->map('/replay-example', function () use ($app, $requestSigner) {
 
     // Create request
-    $guzzle = new GuzzleClient('http://query-auth.dev');
-    $request = $guzzle->post('/api/replay-example');
+    $guzzle = new GuzzleHttpClient(['base_url' => 'http://query-auth.dev']);
+    $request = $guzzle->createRequest('POST', '/api/replay-example');
 
     // Build a new request
     if ($app->request()->isGet()) {
@@ -143,27 +151,21 @@ $app->map('/replay-example', function () use ($app, $credentials, $requestSigner
             'department' => 'Housewares',
         );
 
-        // Add new user data to request
-        foreach ($params as $name => $value) {
-            $request->setPostField($name, $value);
-        }
+        $request->getBody()->replaceFields($params);
 
         // Sign request
-        $requestSigner->signRequest($request, $credentials);
+        $requestSigner->signRequest(new GuzzleHttpRequestAdapter($request), $app->credentials);
     }
 
     // Build a replay request
     if ($app->request()->isPost()) {
-
         // Set a previous request's data on a new request
-        foreach ($app->request()->post() as $param => $value) {
-            $request->setPostField($param, $value);
-        }
+        $request->getBody()->replaceFields($app->request->post());
     }
 
     // Send request
     try {
-        $response = $request->send();
+        $response = $guzzle->send($request);
     } catch (BadResponseException $bre) {
         $response = $bre->getResponse();
     }
@@ -171,7 +173,7 @@ $app->map('/replay-example', function () use ($app, $credentials, $requestSigner
     $app->render('replay.html', array(
         'request' =>  (string) $request,
         'response' => (string) $response,
-        'postFields' => $request->getPostFields(),
+        'postFields' => $request->getBody()->getFields(),
     ));
 })->via('GET', 'POST');
 
@@ -180,7 +182,7 @@ $app->map('/replay-example', function () use ($app, $credentials, $requestSigner
  * If not valid, return the response generated by `$validateSignature`.
  * If valid, return the famous mangled phrase.
  */
-$app->get('/api/get-example', $validateSignature($app, $credentials, $requestValidator), function () use ($app) {
+$app->get('/api/get-example', $validateSignature($app, $requestValidator), function () use ($app) {
 
     $response = $app->response();
 
@@ -205,7 +207,7 @@ $app->get('/api/get-example', $validateSignature($app, $credentials, $requestVal
  * If not valid, return the response generated by `$validateSignature`.
  * If valid, return the famous mangled phrase.
  */
-$app->post('/api/post-example', $validateSignature($app, $credentials, $requestValidator), function () use ($app) {
+$app->post('/api/post-example', $validateSignature($app, $requestValidator), function () use ($app) {
 
     $response = $app->response();
 
@@ -242,7 +244,7 @@ $app->post('/api/post-example', $validateSignature($app, $credentials, $requestV
  *     If the save is unsuccessful, this is a replayed request and is denied
  * If not valid, return the response generated by `$validateSignature`.
  */
-$app->post('/api/replay-example', $validateSignature($app, $credentials, $requestValidator), function () use ($app, $config) {
+$app->post('/api/replay-example', $validateSignature($app, $requestValidator), function () use ($app, $config) {
 
     $response = $app->response();
 
