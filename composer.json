@@ -3,16 +3,13 @@
     "license": "MIT",
     "require": {
         "php": ">=5.4",
+        "erusev/parsedown": "dev-master",
+        "guzzlehttp/guzzle": "~4",
+        "jeremykendall/query-auth": "dev-feature/v3",
+        "shkm/jsend": "dev-master",
         "slim/slim": "~2.4",
         "slim/views": "0.1.*",
-        "twig/twig": "1.13.*",
-        "jeremykendall/query-auth": "2.0.0-beta",
-        "shkm/jsend": "dev-master",
-        "guzzle/guzzle": "v3.8.1",
-        "erusev/parsedown": "dev-master"
-    },
-    "require-dev": {
-        "phpunit/phpunit": ">=4.0"
+        "twig/twig": "1.13.*"
     },
     "autoload": {
         "psr-0": {
