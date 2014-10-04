@@ -263,12 +263,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/jeremykendall/query-auth.git",
-                "reference": "054727448ded5369e409d7410c290e1cfbab1aa9"
+                "reference": "137da889ce2d97a731fa0b00cc8fbb62d8db8aea"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/jeremykendall/query-auth/zipball/054727448ded5369e409d7410c290e1cfbab1aa9",
-                "reference": "054727448ded5369e409d7410c290e1cfbab1aa9",
+                "url": "https://api.github.com/repos/jeremykendall/query-auth/zipball/137da889ce2d97a731fa0b00cc8fbb62d8db8aea",
+                "reference": "137da889ce2d97a731fa0b00cc8fbb62d8db8aea",
                 "shasum": ""
             },
             "require": {
@@ -311,7 +311,7 @@
                 "query authentication",
                 "rest"
             ],
-            "time": "2014-09-25 12:47:00"
+            "time": "2014-10-04 20:08:37"
         },
         {
             "name": "shkm/jsend",
