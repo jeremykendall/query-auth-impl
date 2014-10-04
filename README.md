@@ -18,57 +18,7 @@ installed:
 * Add `192.168.56.102 query-auth.dev` to `/etc/hosts`
 * Open a browser and visit [http://query-auth.dev](http://query-auth.dev)
 
-## Request Signing
-
-Request signing has been abstracted in the `Example\ApiRequestSigner` class.
-Signing requests is now as simple as passing the request object and credentials
-object to the `signRequest` method:
-
-    /**
-     * Signs API request
-     *
-     * @param RequestInterface $request     HTTP Request
-     * @param ApiCredentials   $credentials API Credentials
-     */
-    public function signRequest(RequestInterface $request, ApiCredentials $credentials)
-    {
-        $signedParams = $this->client->getSignedRequestParams(
-            $credentials->getKey(),
-            $credentials->getSecret(),
-            $request->getMethod(),
-            $request->getHost(),
-            $request->getPath(),
-            $this->getParams($request)
-        );
-
-        $this->replaceParams($request, $signedParams);
-    }
-
-## Signature Validation
-
-Signature validation has been abstracted in the `Example\ApiRequestValidator`
-class. Validating request signatures is now as simple as passing the request
-object and credentials object to the `isValid` method:
-
-    /**
-     * Validates an API request
-     *
-     * @param  Request        $request     HTTP Request
-     * @param  ApiCredentials $credentials API Credentials
-     * @return bool           True if valid, false if invalid
-     */
-    public function isValid(Request $request, ApiCredentials $credentials)
-    {
-        return $this->server->validateSignature(
-            $credentials->getSecret(),
-            $request->getMethod(),
-            $request->getHost(),
-            $request->getPath(),
-            $this->getParams($request)
-        );
-    }
-
-## Implementation Examples
+## Examples
 
 All code samples below can be found in `/public/index.php`.
 
@@ -81,12 +31,22 @@ attached to the `/api/*` routes below, know that the validation is being perform
 by the middleware before the code in those routes is being executed.
 
     // Middleware to validate incoming request signatures
-    $validateSignature = function(Slim $app, ApiCredentials $credentials, ApiRequestValidator $requestValidator) {
-        return function() use ($app, $credentials, $requestValidator) {
-            $response = $app->response();
+    // See http://docs.slimframework.com/#Route-Middleware
+    $validateSignature = function (Slim $app, RequestValidator $requestValidator) {
+        return function () use ($app, $requestValidator) {
+            $response = $app->response;
 
             try {
-                if ($requestValidator->isValid($app->request(), $credentials) === false) {
+                // Grabbing credentials from app container kind of mimics grabbing
+                // credentials from persistent storage
+                $credentials = $app->credentials;
+
+                $isValid = $requestValidator->isValid(
+                    new SlimRequestAdapter($app->request),
+                    $credentials
+                );
+
+                if ($isValid === false) {
                     $jsend = new JSendResponse('fail', array('message' => 'Invalid signature'));
                     $response->setStatus(403);
                     $response->headers->set('Content-Type', 'application/json');
@@ -110,18 +70,18 @@ Visit [http://query-auth.dev/get-example](http://query-auth.dev/get-example) to 
     /**
      * Sends a signed GET request which returns a famous mangled phrase
      */
-    $app->get('/get-example', function() use ($app, $credentials, $requestSigner) {
+    $app->get('/get-example', function () use ($app, $requestSigner) {
 
         // Create request
-        $guzzle = new GuzzleClient('http://query-auth.dev');
-        $request = $guzzle->get('/api/get-example');
+        $guzzle = new GuzzleHttpClient(['base_url' => 'http://query-auth.dev']);
+        $request = $guzzle->createRequest('GET', '/api/get-example');
 
         // Sign request
-        $requestSigner->signRequest($request, $credentials);
+        $requestSigner->signRequest(new GuzzleHttpRequestAdapter($request), $app->credentials);
 
         // Send request
         try {
-            $response = $request->send();
+            $response = $guzzle->send($request);
         } catch (BadResponseException $bre) {
             $response = $bre->getResponse();
         }
@@ -142,8 +102,8 @@ Below is the `/api/get-example` `GET` route of the sample implementation:
      * Validates a signed GET request and, if the request is valid, returns a
      * famous mangled phrase
      */
-    $app->get('/api/get-example', $validateSignature($app, $credentials, $requestValidator), function () use ($app) {
-        
+    $app->get('/api/get-example', $validateSignature($app, $requestValidator), function () use ($app) {
+
         $response = $app->response();
 
         // If client error (400 - 499) because signature is invalid, return response
@@ -158,6 +118,7 @@ Below is the `/api/get-example` `GET` route of the sample implementation:
 
         $response->headers->set('Content-Type', 'application/json');
         $response->setBody($jsend->encode());
+
         return $response;
     });
 
@@ -170,7 +131,7 @@ Visit [http://query-auth.dev/post-example](http://query-auth.dev/post-example) t
     /**
      * Sends a signed POST request to create a new user
      */
-    $app->get('/post-example', function() use ($app, $credentials, $requestSigner) {
+    $app->get('/post-example', function () use ($app, $requestSigner) {
 
         $params = array(
             'name' => 'Ash',
@@ -179,15 +140,15 @@ Visit [http://query-auth.dev/post-example](http://query-auth.dev/post-example) t
         );
 
         // Create request
-        $guzzle = new GuzzleClient('http://query-auth.dev');
-        $request = $guzzle->post('/api/post-example', array(), $params);
+        $guzzle = new GuzzleHttpClient(['base_url' => 'http://query-auth.dev']);
+        $request = $guzzle->createRequest('POST', '/api/post-example', ['body' => $params]);
 
         // Sign request
-        $requestSigner->signRequest($request, $credentials);
+        $requestSigner->signRequest(new GuzzleHttpRequestAdapter($request), $app->credentials);
 
         // Send request
         try {
-            $response = $request->send();
+            $response = $guzzle->send($request);
         } catch (BadResponseException $bre) {
             $response = $bre->getResponse();
         }
@@ -207,7 +168,7 @@ Below is the `/api/post-example` `POST` route of the sample implementation:
      * Validates a signed POST request and, if the request is valid, mimics creating
      * a new user
      */
-    $app->post('/api/post-example', $validateSignature($app, $credentials, $requestValidator), function() use ($app) {
+    $app->post('/api/post-example', $validateSignature($app, $requestValidator), function () use ($app) {
 
         $response = $app->response();
 
@@ -233,6 +194,7 @@ Below is the `/api/post-example` `POST` route of the sample implementation:
 
         $response->headers->set('Content-Type', 'application/json');
         $response->setBody($jsend->encode());
+
         return $response;
     });
 
@@ -245,11 +207,11 @@ Visit [http://query-auth.dev/replay-example](http://query-auth.dev/replay-exampl
     /**
      * Sends a signed POST request to create a new user, OR replays a previous POST request
      */
-    $app->map('/replay-example', function () use ($app, $credentials, $requestSigner) {
+    $app->map('/replay-example', function () use ($app, $requestSigner) {
 
         // Create request
-        $guzzle = new GuzzleClient('http://query-auth.dev');
-        $request = $guzzle->post('/api/replay-example');
+        $guzzle = new GuzzleHttpClient(['base_url' => 'http://query-auth.dev']);
+        $request = $guzzle->createRequest('POST', '/api/replay-example');
 
         // Build a new request
         if ($app->request()->isGet()) {
@@ -260,35 +222,29 @@ Visit [http://query-auth.dev/replay-example](http://query-auth.dev/replay-exampl
                 'department' => 'Housewares',
             );
 
-            // Add new user data to request
-            foreach ($params as $name => $value) {
-                $request->setPostField($name, $value);
-            }
+            $request->getBody()->replaceFields($params);
 
             // Sign request
-            $requestSigner->signRequest($request, $credentials);
+            $requestSigner->signRequest(new GuzzleHttpRequestAdapter($request), $app->credentials);
         }
 
         // Build a replay request
         if ($app->request()->isPost()) {
-
             // Set a previous request's data on a new request
-            foreach ($app->request()->post() as $param => $value) {
-                $request->setPostField($param, $value);
-            }
+            $request->getBody()->replaceFields($app->request->post());
         }
 
         // Send request
         try {
-            $response = $request->send();
+            $response = $guzzle->send($request);
         } catch (BadResponseException $bre) {
             $response = $bre->getResponse();
         }
 
         $app->render('replay.html', array(
-            'request' =>  (string) $request, 
-            'response' => (string) $response, 
-            'postFields' => $request->getPostFields(),
+            'request' =>  (string) $request,
+            'response' => (string) $response,
+            'postFields' => $request->getBody()->getFields(),
         ));
     })->via('GET', 'POST');
 
@@ -309,7 +265,7 @@ Below is the `/api/replay-example` `POST` route of the sample implementation:
      *     If the save is unsuccessful, this is a replayed request and is denied
      * If not valid, return the response generated by `$validateSignature`.
      */
-    $app->post('/api/replay-example', $validateSignature($app, $credentials, $requestValidator), function() use ($app, $config) {
+    $app->post('/api/replay-example', $validateSignature($app, $requestValidator), function () use ($app, $config) {
 
         $response = $app->response();
 
@@ -355,24 +311,16 @@ Below is the `/api/replay-example` `POST` route of the sample implementation:
 
         $response->headers->set('Content-Type', 'application/json');
         $response->setBody($jsend->encode());
+
         return $response;
     });
-
-## Running Tests
-
-Unit and Integration tests are provided in this example implementation. You can
-run the tests from the command line by executing `./vendor/bin/phpunit` from
-the command line.
-
-**IMPORTANT**: The VM *must* be running in order to run the integration tests.
-If you'd like to run just the unit tests, include the `--exclude-group` flag,
-like so: `./vendor/bin/phpunit --exclude-group=vm-required`.
 
 ## Credits
 
 This example implementation makes use of the following external dependencies:
 
 * [Slim Framework](http://slimframework.com/): A PHP microframework
+* [Twig](http://twig.sensiolabs.org/): PHP template engine
 * [Guzzle](http://guzzlephp.org/): A PHP HTTP client, used here to send requests
 * [JSend](https://github.com/shkm/JSend): [Jamie Schembri's](https://twitter.com/shkm)
   PHP implementation of the OmniTI [JSend specifiction](http://labs.omniti.com/labs/jsend)
